@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/colby-swandale/rubocop-github-annotations-formatter
-  revision: 0eda13b2b60e5ade2d10a035e57fe7768d4b6870
+  revision: 7bdcb0d6cb569cfac6977d1a1e683d986f55a3d9
   specs:
     rubocop-github-annotations-formatter (0.1.0)
       rubocop
