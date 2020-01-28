@@ -59,7 +59,7 @@ jobs:
         run: |
           bundle audit check
           bundle exec brakeman
-          bundle exec rake rubocop
+          bundle exec rubocop --format RubocopGithubAnnotationFormatter::AnnotationFormatter --format progress
       - name: Run Tests
         run: |
           bundle exec rake test

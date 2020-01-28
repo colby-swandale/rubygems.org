@@ -3,6 +3,7 @@ require:
   - ./test/safe_navigation_cop.rb
   - rubocop-performance
   - rubocop-rails
+  - rubocop-github-annotation-formatter
 
 AllCops:
   Exclude:

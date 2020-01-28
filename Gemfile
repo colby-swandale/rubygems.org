@@ -57,6 +57,7 @@ group :development, :test do
   gem "rubocop-performance", require: false
   gem "brakeman", require: false
   gem "toxiproxy", "~> 1.0.0"
+  gem "rubocop-github-annotations-formatter", require: false, git: "https://github.com/colby-swandale/rubocop-github-annotations-formatter"
 end
 
 group :development do

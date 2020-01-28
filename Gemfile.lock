@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/colby-swandale/rubocop-github-annotations-formatter
+  revision: 0eda13b2b60e5ade2d10a035e57fe7768d4b6870
+  specs:
+    rubocop-github-annotations-formatter (0.1.0)
+      rubocop
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -449,6 +456,7 @@ DEPENDENCIES
   rotp
   rqrcode
   rubocop
+  rubocop-github-annotations-formatter!
   rubocop-performance
   rubocop-rails
   sass

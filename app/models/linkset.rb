@@ -1,7 +1,7 @@
 class Linkset < ApplicationRecord
   belongs_to :rubygem
 
-  LINKS = %w[home code docs wiki mail bugs].freeze
+  LINKS = ["home", "code", "docs", "wiki", "mail", "bugs"].freeze
 
   LINKS.each do |url|
     validates_formatting_of url.to_sym,
