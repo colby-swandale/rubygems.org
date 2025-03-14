@@ -12,6 +12,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
       url: "http://#{ENV['SELENIUM_HOST']}:4444"
     }
   else
-    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+    driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400] do |options|
+      options.add_option(:browser_version, '132.0.6834.159')
+    end
   end
 end
