@@ -2,6 +2,7 @@
 
 require "test_helper"
 require "concurrent/atomics"
+require "timeout"
 
 class ParallelPusherTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
@@ -140,6 +141,51 @@ class ParallelPusherTest < ActiveSupport::TestCase
       assert_equal (0..4).to_a, versions.pluck(:position).sort
       assert_equal ["5.0.0"], versions.where(latest: true).pluck(:number)
     end
+  end
+
+  should "take the advisory lock before updating a version row" do
+    rubygem = create(:rubygem, name: track_gem("advisory-lock-ordering"))
+    version = create(:version, rubygem: rubygem)
+    backend_pid = Queue.new
+    updater = nil
+
+    Rubygem.transaction do
+      Rubygem.advisory_xact_lock!("rubygem_version_reorder", rubygem.id)
+
+      updater = Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do |connection|
+          backend_pid << connection.select_value("SELECT pg_backend_pid()")
+          Version.find(version.id).update!(indexed: false)
+        end
+      end
+
+      waiting_pid = backend_pid.pop
+      Timeout.timeout(5) do
+        Rubygem.uncached do
+          loop do
+            waiting = Rubygem.connection.select_value(<<~SQL.squish)
+              SELECT EXISTS (
+                SELECT 1 FROM pg_locks
+                WHERE pid = #{Integer(waiting_pid)}
+                  AND locktype = 'advisory'
+                  AND NOT granted
+              )
+            SQL
+            break if waiting
+
+            sleep 0.01
+          end
+        end
+      end
+
+      Version.lock("FOR UPDATE NOWAIT").find(version.id)
+    end
+
+    Timeout.timeout(5) { updater.value }
+
+    refute_predicate version.reload, :indexed?
+  ensure
+    updater&.kill if updater&.alive?
   end
 
   private
